@@ -8,7 +8,7 @@ enableCodeCopy = true
 disableImageOptimization = false
 
 defaultBackgroundImage = "img/purple.png"
-defaultFeaturedImage = "img/unnamed.jpg"
+defaultFeaturedImage = "img/sakiro.jpg"
 
 [header]
 layout = "fixed"
@@ -104,3 +104,12 @@ showTableOfContents = true
 groupByYear = true
 cardView = true
 cardViewScreenWidth = false
+
+[firebase]
+apiKey = "AIzaSyDUwmwII8Q9NPribmi5u6cp5SZa1bwpbts"
+authDomain = "blog-f12c3.firebaseapp.com"
+projectId = "blog-f12c3"
+storageBucket = "blog-f12c3.firebasestorage.app"
+messagingSenderId = "509884854194"
+appId = "1:509884854194:web:efd4c7c9a8969e5a9f3eab"
+measurementId = "G-263GNLMHJ3"
