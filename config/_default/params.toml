@@ -1,0 +1,106 @@
+colorScheme = "blowfish"
+defaultAppearance = "dark"
+autoSwitchAppearance = true
+
+enableSearch = true
+enableCodeCopy = true
+
+disableImageOptimization = false
+
+defaultBackgroundImage = "img/purple.png"
+defaultFeaturedImage = "img/unnamed.jpg"
+
+[header]
+layout = "fixed"
+
+[footer]
+showMenu = false
+showCopyright = true
+showThemeAttribution = false
+showAppearanceSwitcher = false
+showScrollToTop = true
+
+[homepage]
+layout = "background"
+showRecent = true
+showRecentItems = 5
+showMoreLink = true
+showMoreLinkDest = "/posts/"
+cardView = false
+cardViewScreenWidth = false
+layoutBackgroundBlur = false
+
+[profile]
+title = "Welcome to Rithmory"
+subtitle = "Every chord, every code — a memory in rhythm."
+description = "Code & Music。"
+imageUrl = "img/unnamed.jpg"
+imageTitle = "Rithmory"
+buttons = [
+  { name = "Blog Posts", url = "/posts/" },
+  { name = "GitHub", url = "https://github.com/Wellshully" },
+]
+
+[article]
+showDate = true
+showViews = true
+showLikes = true
+showDateUpdated = true
+showAuthor = true
+showHero = true
+heroStyle = "background"           # valid options: basic, big, background, thumbAndBackground
+layoutBackgroundBlur = true        # only used when heroStyle equals background or thumbAndBackground
+layoutBackgroundHeaderSpace = true # only used when heroStyle equals background
+showBreadcrumbs = false
+showDraftLabel = true
+showEdit = false
+# editURL = "https://github.com/username/repo/"
+editAppendPath = true
+seriesOpened = false
+showHeadingAnchors = true
+showPagination = true
+invertPagination = true
+showReadingTime = true
+showTableOfContents = true
+showRelatedContent = true
+relatedContentLimit = 6
+showTaxonomies = true
+showAuthorsBadges = true
+showWordCount = true
+#sharingLinks = [ "mastodon", "telegram", "twitter", "reddit", "facebook","whatsapp", ]
+
+[list]
+showHero = true
+heroStyle = "background"           # valid options: basic, big, background, thumbAndBackground
+layoutBackgroundBlur = true        # only used when heroStyle equals background or thumbAndBackground
+layoutBackgroundHeaderSpace = true # only used when heroStyle equals background
+showBreadcrumbs = false
+showSummary = false
+showViews = false
+showLikes = false
+showTableOfContents = false
+showCards = false
+groupByYear = true
+cardView = true
+cardViewScreenWidth = false
+constrainItemsWidth = false
+[taxonomy]
+showTermCount = true
+showHero = true
+heroStyle = "background"    # valid options: basic, big, background, thumbAndBackground
+showBreadcrumbs = false
+showViews = false
+showLikes = false
+showTableOfContents = false
+cardView = false
+
+[term]
+showHero = true
+heroStyle = "background"    # valid options: basic, big, background, thumbAndBackground
+showBreadcrumbs = true
+showViews = false
+showLikes = false
+showTableOfContents = true
+groupByYear = true
+cardView = true
+cardViewScreenWidth = false
