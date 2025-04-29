@@ -44,5 +44,15 @@
       
     </item>
     
+    <item>
+      <title>Hello World</title>
+      <link>http://localhost:1313/posts/hello-world/</link>
+      <pubDate>Tue, 29 Apr 2025 13:43:44 +0800</pubDate>
+      <author>wellshully@gmail.com (39ll7)</author>
+      <guid>http://localhost:1313/posts/hello-world/</guid>
+      <description></description>
+      
+    </item>
+    
   </channel>
 </rss>
