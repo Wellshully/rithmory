@@ -2,6 +2,7 @@
 date = '2025-04-29T15:55:37+08:00'
 draft = false
 title = 'First_Blog'
+tags = ["blog"]
 +++
 
 ## Why Start?

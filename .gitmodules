@@ -2,3 +2,7 @@
 	path = themes/blowfish
 	url = https://github.com/nunocoracao/blowfish.git
 	branch = main
+[submodule "themes/hugo-dynamic-tabs"]
+	path = themes/hugo-dynamic-tabs
+	url = https://github.com/rvanhorn/hugo-dynamic-tabs.git
+	branch = bootstrap5
