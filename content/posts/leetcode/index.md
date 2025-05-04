@@ -2,10 +2,46 @@
 title = "LeetCode Daily Notes"
 date = "2025-05-03T11:12:30+08:00"
 draft = false
+math = true
 tags = ["leetcode"]
 +++
 > 先把所有筆記都寫一起等哪天塞不下了再分開，練習用英文寫
 ## <span class="tag easy">Easy</span>
+
+### number-of-equivalent-domino-pairs
+- [Link](https://leetcode.com/problems/number-of-equivalent-domino-pairs/)
+<details>
+<summary>My First Submission</summary>
+
+```cpp
+class Solution {
+public:
+    int numEquivDominoPairs(vector<vector<int>>& dominoes) {
+        int len=dominoes.size();
+        vector<vector<int>> table(9, vector<int>(9, 0));
+        int ans=0;
+        int sum=0;
+        for(int i=0; i < len; i++)
+            table[dominoes[i][0]-1][dominoes[i][1]-1]++;
+        for(int i=0; i < 9; i++)
+            for(int j=0; j < 9; j++){
+                if(i<j){
+                    sum=table[i][j]+table[j][i];
+                    ans+=sum*(sum-1)/2;
+                }
+                if(i==j) ans+=table[i][j]*(table[i][j]-1)/2;
+            }
+        return ans;
+    }
+};
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** I use a 9*9 table to count each possible pair and count the combination of `table[i][j]+table[j][i]`. However, I find that I can map the value to a two-digit positive integer,`i.e., (x,y)→10x+y.` Thus, I can use a 100 array to count the pairs. Also, for the combination, I dont need to count the combination in the end with `com = sum*(sum-1)/2`, instead, I can count it during the iteration with `com += num[val]; num[val]++;`. That is, I should notice That
+{{< katex >}}
+\\(C(n, 2) = \sum_{i=1}^{n-1} i = \frac{n(n - 1)}{2}\\)
 
 ## <span class="tag medium">Medium</span>
 
