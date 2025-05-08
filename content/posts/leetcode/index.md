@@ -70,6 +70,193 @@ public:
 
 ## <span class="tag medium">Medium</span>
 
+### find-minimum-time-to-reach-last-room-ii
+- [Link](https://leetcode.com/problems/find-minimum-time-to-reach-last-room-ii/)
+<details>
+<summary>My First Submission</summary>
+
+```cpp
+ class Solution {
+public:
+    int minTimeToReach(vector<vector<int>>& moveTime) {
+        int n = moveTime.size();
+        int m = moveTime[0].size();
+        int cost = 0;
+        vector<vector<int>> ans(n, vector<int>(m, INT_MAX));
+        priority_queue<tuple<int, int, int, int>, vector<tuple<int, int, int, int>>, greater<>> pq;
+
+        ans[0][0] = 0;
+        pq.push({0, 0, 0, 0});
+
+        vector<pair<int, int>> dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+        while (!pq.empty()) {
+            auto [time, r, c, pop_cost] = pq.top();
+            int cost = pop_cost;
+            pq.pop();
+            int move_cost= cost + 1;
+            if (r == n - 1 && c == m - 1)
+                return time;
+
+            if (time > ans[r][c]) continue; // already found better path
+
+            for (auto [dr, dc] : dirs) {
+                int nr = r + dr, nc = c + dc;
+                if (nr < 0 || nr >= n || nc < 0 || nc >= m) continue;
+
+                int wait = max(moveTime[nr][nc], time);
+                int arriveTime = wait + move_cost;
+
+                if (arriveTime < ans[nr][nc]) {
+                    ans[nr][nc] = arriveTime;
+                    pq.push({arriveTime, nr, nc, (cost+1)%2});
+                }
+            }
+        }
+
+        return ans[n - 1][m - 1]; // unreachable case (problem guarantees reachability)
+    }
+};
+
+  ```
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** Just store one more "cost". Trivial if we've done problem i.
+
+### find-minimum-time-to-reach-last-room-i
+- [Link](https://leetcode.com/problems/find-minimum-time-to-reach-last-room-i/)
+<details>
+<summary>My First Submission</summary>
+
+  ```cpp
+  class Solution {
+public:
+    int minTimeToReach(vector<vector<int>>& moveTime) {
+        int n=moveTime.size();
+        int m=moveTime[0].size();
+        vector<vector<int>> ans(n, vector<int>(m, 1e9+100));
+        ans[0][0]=0;
+        priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, greater<>> pq;
+        pq.push({0, 0, 0});
+        int cur_r=0;
+        int cur_c=0;
+        while(!pq.empty()){
+            if(cur_r>0){
+                if(ans[cur_r][cur_c] >= moveTime[cur_r-1][cur_c] &&
+                 ans[cur_r][cur_c]+1 < ans[cur_r-1][cur_c]){
+                    ans[cur_r-1][cur_c] = ans[cur_r][cur_c]+1;
+                    pq.push({ans[cur_r-1][cur_c],cur_r-1,cur_c});
+                }
+                else if(ans[cur_r][cur_c] < moveTime[cur_r-1][cur_c] &&
+                 moveTime[cur_r-1][cur_c]+1 < ans[cur_r-1][cur_c]){
+                    ans[cur_r-1][cur_c] = moveTime[cur_r-1][cur_c]+1;
+                    pq.push({ans[cur_r-1][cur_c],cur_r-1,cur_c});
+                }
+            }
+            if(cur_r<n-1){
+                if(ans[cur_r][cur_c] >= moveTime[cur_r+1][cur_c] &&
+                 ans[cur_r][cur_c]+1 < ans[cur_r+1][cur_c]){
+                    ans[cur_r+1][cur_c] = ans[cur_r][cur_c]+1;
+                    pq.push({ans[cur_r+1][cur_c],cur_r+1,cur_c});
+                 }
+                 else if(ans[cur_r][cur_c] < moveTime[cur_r+1][cur_c] &&
+                 moveTime[cur_r+1][cur_c]+1 < ans[cur_r+1][cur_c]){
+                    ans[cur_r+1][cur_c] = moveTime[cur_r+1][cur_c]+1;
+                    pq.push({ans[cur_r+1][cur_c],cur_r+1,cur_c});
+                }
+            }
+            if(cur_c>0){
+                if(ans[cur_r][cur_c] >= moveTime[cur_r][cur_c-1] &&
+                 ans[cur_r][cur_c]+1 < ans[cur_r][cur_c-1]){
+                    ans[cur_r][cur_c-1] = ans[cur_r][cur_c]+1;
+                    pq.push({ans[cur_r][cur_c-1],cur_r,cur_c-1});
+                 }
+                 else if(ans[cur_r][cur_c] < moveTime[cur_r][cur_c-1] &&
+                 moveTime[cur_r][cur_c-1]+1 < ans[cur_r][cur_c-1]){
+                    ans[cur_r][cur_c-1] = moveTime[cur_r][cur_c-1]+1;
+                    pq.push({ans[cur_r][cur_c-1],cur_r,cur_c-1});
+                }
+            }
+            if(cur_c<m-1){
+                if(ans[cur_r][cur_c] >= moveTime[cur_r][cur_c+1] &&
+                 ans[cur_r][cur_c]+1 < ans[cur_r][cur_c+1]){
+                    ans[cur_r][cur_c+1]= ans[cur_r][cur_c]+1;
+                    pq.push({ans[cur_r][cur_c+1],cur_r,cur_c+1});
+                }
+                else if(ans[cur_r][cur_c] < moveTime[cur_r][cur_c+1] &&
+                 moveTime[cur_r][cur_c+1]+1 < ans[cur_r][cur_c+1]){
+                    ans[cur_r][cur_c+1] = moveTime[cur_r][cur_c+1]+1;
+                    pq.push({ans[cur_r][cur_c+1],cur_r,cur_c+1});
+                }
+            }
+            auto [val, row, col] = pq.top();
+            pq.pop(); 
+            cur_r=row;
+            cur_c=col;
+            if(cur_r==n-1&&cur_c==m-1)
+                return val;
+        }
+        return ans[n-1][m-1];
+    }
+};
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** Originally, I guess that it's a dp problem because the problem goes from top-left to bottom-right, and we need the minimum cost. However, I find that dp does not work because the values not only come from top or left. After seeing the hint, I know that I have to implement the `Dijkstra` alg but actually I forget the details about this algorithm. My friend told me that I can use a priority_queue, and I tried to finish this problem in the way that I think probably works. Fortunately, I get ac in the end, and gpt told me what I did is exactly the `Dijkstra` algorithm.
+- **Dijkstra rewind:** Doing...
+- **Improving:** I can improve the redundant direction conditions:
+
+<details>
+<summary>Code</summary>
+
+  ```cpp
+  class Solution {
+public:
+    int minTimeToReach(vector<vector<int>>& moveTime) {
+        int n = moveTime.size();
+        int m = moveTime[0].size();
+        vector<vector<int>> ans(n, vector<int>(m, INT_MAX));
+        priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, greater<>> pq;
+
+        ans[0][0] = 0;
+        pq.push({0, 0, 0});
+
+        vector<pair<int, int>> dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+        while (!pq.empty()) {
+            auto [time, r, c] = pq.top();
+            pq.pop();
+
+            if (r == n - 1 && c == m - 1)
+                return time;
+
+            if (time > ans[r][c]) continue; // already found better path
+
+            for (auto [dr, dc] : dirs) {
+                int nr = r + dr, nc = c + dc;
+                if (nr < 0 || nr >= n || nc < 0 || nc >= m) continue;
+
+                int wait = max(moveTime[nr][nc], time);
+                int arriveTime = wait + 1;
+
+                if (arriveTime < ans[nr][nc]) {
+                    ans[nr][nc] = arriveTime;
+                    pq.push({arriveTime, nr, nc});
+                }
+            }
+        }
+
+        return ans[n - 1][m - 1]; // unreachable case (problem guarantees reachability)
+    }
+};
+  ```
+
+  </details>
+
+
 ### domino-and-tromino-tiling
 - [Link](https://leetcode.com/problems/domino-and-tromino-tiling/)
 <details>
