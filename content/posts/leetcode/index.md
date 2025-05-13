@@ -8,6 +8,50 @@ tags = ["leetcode"]
 > 先把所有筆記都寫一起等哪天塞不下了再分開，練習用英文寫
 ## <span class="tag easy">Easy</span>
 
+### finding-3-digit-even-numbers
+- [Link](https://leetcode.com/problems/finding-3-digit-even-numbers/)
+<details>
+<summary>My First Submission</summary>
+
+  ```cpp
+  class Solution {
+public:
+    vector<int> findEvenNumbers(vector<int>& digits) {
+        int len=digits.size();
+        vector<int> table(10,0);
+        vector<int> ans(0);
+        int d1,d2,d3;
+        for(int i=0;i<len;i++)
+            table[digits[i]]++;
+        for(int i=100;i<1000;i++){
+            if(i%2!=0)continue;
+            d1=i/100;
+            d2=(i%100)/10;
+            d3=i%10;
+            if(table[d1]==0)continue;
+            if(table[d2]==0)continue;
+            else if(d1==d2 && table[d1]==1)continue;
+            if(table[d3]==0)continue;
+            else if(table[d3]==1 && (d3==d2 || d3==d1)) continue;
+            else if(table[d3]==2 && d3==d2 && d3 ==d1) continue;
+            int num=d1*100+d2*10+d3;
+            ans.push_back(num);
+        }
+        return ans;
+    }
+};
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** Just run 100-999 and check if its valid.
+- **Improving:** This [solution](https://leetcode.com/problems/finding-3-digit-even-numbers/solutions/6735629/count-test-100-999-beats-100/) is a cleaner version of mine. There are some takeaways:
+  - If I want to iterate the value of an array, use `for(int x: digits)` and `x` is better than `for(int i=0;i<len;i++)` and `digits[i]`
+  - There are actually two choice to avoid many `if` in my code:(1) I can use `auto freq0=freq` so that I can update `freq0` and not change `freq`. (2) I can directly do the minus operation on the freq array and add them back in the end.
+
+---
+
 ### build-array-from-permutation
 - [Link](https://leetcode.com/problems/build-array-from-permutation/)
 <details>
@@ -31,6 +75,8 @@ public:
 - **My result:** <span class="result ac">AC</span>  
 - **Original Idea & Result Analyzing:** This problem is trivial if we dont use O(1) memory
 - **Improving:** We can use a slot to store two information, for example, if `nums[0]=5 and nums[5]=10`, `nums[0]=5+1024*10` can store both information of 5 and 10, so that we can get `5` by `nums[0]%1024` if `nums[i]=0` needs it, and in the end, we can get `10` by `nums[0]/1024` for the answer array. [Source](https://leetcode.com/problems/build-array-from-permutation/solutions/6718380/o-n-o-1-space-with-images-example-walkthrough-c-python-java)
+
+---
 
 ### number-of-equivalent-domino-pairs
 - [Link](https://leetcode.com/problems/number-of-equivalent-domino-pairs/)
@@ -68,7 +114,48 @@ public:
 {{< katex >}}
 \\(C(n, 2) = \sum_{i=1}^{n-1} i = \frac{n(n - 1)}{2}\\)
 
+---
+
 ## <span class="tag medium">Medium</span>
+
+### total-characters-in-string-after-transformations-i
+- [Link](https://leetcode.com/problems/total-characters-in-string-after-transformations-i/)
+<details>
+<summary>My First Submission</summary>
+
+  ```cpp
+  class Solution {
+public:
+    int lengthAfterTransformations(string s, int t) {
+        int len=s.size();
+        long long ans=len;
+        long long z_keep;
+        const int mod=1e9+7;
+        vector<long long> alphabet(26,0);
+        for(int i=0;i<len;i++)
+            alphabet[s[i]-'a']++;
+        for(int i=0;i<t;i++){
+            for(int j=25 ;j>=0; j--){
+                if(j==25){
+                    z_keep=alphabet[j];
+                    ans=(ans+z_keep)%mod;
+                }
+                if(j==0){
+                    alphabet[0]=z_keep;
+                    alphabet[1]=(alphabet[1]+z_keep)%mod;
+                }
+                else alphabet[j]=alphabet[j-1];
+            }
+        }
+        return ans;
+    }
+};
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** First compute the frequency of all characters and we just update this frequency t time. For each update, we check the count of z and add this number to answer.
 
 ### find-minimum-time-to-reach-last-room-ii
 - [Link](https://leetcode.com/problems/find-minimum-time-to-reach-last-room-ii/)
@@ -123,6 +210,8 @@ public:
 
 - **My result:** <span class="result ac">AC</span>  
 - **Original Idea & Result Analyzing:** Just store one more "cost". Trivial if we've done problem i.
+
+---
 
 ### find-minimum-time-to-reach-last-room-i
 - [Link](https://leetcode.com/problems/find-minimum-time-to-reach-last-room-i/)
@@ -256,7 +345,7 @@ public:
 
   </details>
 
-
+---
 ### domino-and-tromino-tiling
 - [Link](https://leetcode.com/problems/domino-and-tromino-tiling/)
 <details>
@@ -401,7 +490,26 @@ public:
 - **Original Idea & Result Analyzing:** I think the 4-while-loops looks too ugly.
 - **Improving:** I can track the c1 and count swap_c1_top&swap_c1_bottom in the same iteration. [Source](https://leetcode.com/problems/minimum-domino-rotations-for-equal-row/solutions/6709103/3-different-kinds-of-solutions-beats-100)
 
+---
+
 ## <span class="tag hard">Hard</span>
+
+### count-number-of-balanced-permutations
+- [Link](https://leetcode.com/problems/count-number-of-balanced-permutations/)
+- **No Submission**
+- **Original Idea:** 
+  - Only the frequency of the digits matters because of the permutation
+  - Once we find a set of even digits and odd digits, we can use combination to find the number of this permutation 
+  - We should use dp to find the valid set otherwise the complexity is too big. However, I did not come up with such dp relation.
+- **Community** [Solution](https://leetcode.com/problems/count-number-of-balanced-permutations/solutions/6726791/dp-combinatorics-step-by-step-with-images-example-walkthrough-c-python-java/)
+  - **Idea:**
+    - `dp[i][j]` :Stores the number of ways to pick exactly `j digits` found so far that `sum to i`. Hence, `[halfsum][halflen]` would get the final ways of having the sum of halfsum with halflen. As we iterate the num array, we update: 
+      - (1) the count of the digit `d`
+      - (2) For the current digit `d`, some `sum` and `digit_len`, we know that `dp[sum][digit_len] += dp[sum-d][digit_len-1]`.
+      - (3) This line `res = res * fact[halfLen] % mod * fact[n - halfLen] % mod;` means that the two half can permute, and next we should divide the duplicates which is stored in `digits[i]`.
+ 
+
+---
 
 ### maximum-number-of-tasks-you-can-assign 
 - [Link](https://leetcode.com/problems/maximum-number-of-tasks-you-can-assign/) 
@@ -459,8 +567,8 @@ public:
 - **Original Idea & Result Analyzing:** 
   - I tried to `find the first k strongest workers to complete k hardest tasks.` Once I find that there is a task that the worker cannot solve, I `push the task to a queue` because it can only be solved with pills, and then I check the next task. If `worker >= task[i], the worker is assigned to solve this task`, and we move to the next worker&task. Next, we would finish assigning workers or push all tasks to the queue, which means that even the current strongest worker cannot solve the easiest task. In the end, I check if the rest workers can solve tasks with pills.
   - I get `37 / 49 testcases passed`. I find that it is because I tried to assign stronger worker to a easier task in the loop that I check `worker >= task[i]`, but actually the worker may solve a harder task with pills.
-- Community [Solution](https://leetcode.com/problems/maximum-number-of-tasks-you-can-assign/solutions/6703695/binary-search-greedy-with-images-example-walkthrough-c-python-java)
-  - Idea: Binary search k, and check if k is **posible**
-  - Correctness: doing...
+- **Community** [Solution](https://leetcode.com/problems/maximum-number-of-tasks-you-can-assign/solutions/6703695/binary-search-greedy-with-images-example-walkthrough-c-python-java)
+  - **Idea:** Binary search k, and check if k is **posible**
+  - **Correctness:** doing...
 
 
