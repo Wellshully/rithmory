@@ -8,6 +8,36 @@ tags = ["leetcode"]
 > 先把所有筆記都寫一起等哪天塞不下了再分開，練習用英文寫
 ## <span class="tag easy">Easy</span>
 
+### longest-unequal-adjacent-groups-subsequence-i
+- [Link](https://leetcode.com/problems/longest-unequal-adjacent-groups-subsequence-i/)
+<details>
+<summary>My First Submission</summary>
+
+  ```cpp
+  class Solution {
+public:
+    vector<string> getLongestSubsequence(vector<string>& words, vector<int>& groups) {
+        int len = words.size();
+        int g=groups[0];
+        vector<string> ans;
+        for(int i=0;i<len;i++){
+            if(groups[i]==g){
+                ans.push_back(words[i]);
+                g=1-g;
+            } 
+        }
+        return ans;
+    }
+};
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** It's hard to understand the problem 
+
+---
+
 ### finding-3-digit-even-numbers
 - [Link](https://leetcode.com/problems/finding-3-digit-even-numbers/)
 <details>
@@ -117,6 +147,45 @@ public:
 ---
 
 ## <span class="tag medium">Medium</span>
+### longest-unequal-adjacent-groups-subsequence-ii
+- [Link](https://leetcode.com/problems/longest-unequal-adjacent-groups-subsequence-ii/)
+- **No Submission:** I gave up understanding the problem...
+- **Idea:** Though I did not submit, I think the solution is quite easy:
+  - **Step1:** Iterate from 0 to len and for `dp[j]` where `0<j<len`, we check if it can be `dp[i]+1` where `0<i<j`
+  - **Step2:** Besides filling dp, keep tracking `parent[j]=i` so that we can reconstruct the answer in the end.
+
+---
+
+### sort-colors
+- [Link](https://leetcode.com/problems/sort-colors/)
+<details>
+<summary>My First Submission</summary>
+
+```cpp
+  class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        int len=nums.size();
+        int count[3]={0};
+        for(int i=0;i<len;i++)
+           count[nums[i]]++;
+        int idx=0;
+        for(int i=0;i<3;i++)
+            while(count[i]>0){
+                nums[idx]=i;
+                count[i]--;
+                idx++;
+            }
+    }
+};
+  ```
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** Since the values are in `[0,1,2]` hence we can count the frequency of each and replace the answer to num in the end.
+
+---
+
 
 ### total-characters-in-string-after-transformations-i
 - [Link](https://leetcode.com/problems/total-characters-in-string-after-transformations-i/)
@@ -156,6 +225,8 @@ public:
 
 - **My result:** <span class="result ac">AC</span>  
 - **Original Idea & Result Analyzing:** First compute the frequency of all characters and we just update this frequency t time. For each update, we check the count of z and add this number to answer.
+
+---
 
 ### find-minimum-time-to-reach-last-room-ii
 - [Link](https://leetcode.com/problems/find-minimum-time-to-reach-last-room-ii/)
@@ -494,6 +565,13 @@ public:
 
 ## <span class="tag hard">Hard</span>
 
+### total-characters-in-string-after-transformations-ii
+- [Link](https://leetcode.com/problems/total-characters-in-string-after-transformations-ii/)
+- **No Submission**
+- **Community** [Solution]()
+
+--- 
+
 ### count-number-of-balanced-permutations
 - [Link](https://leetcode.com/problems/count-number-of-balanced-permutations/)
 - **No Submission**
@@ -568,7 +646,7 @@ public:
   - I tried to `find the first k strongest workers to complete k hardest tasks.` Once I find that there is a task that the worker cannot solve, I `push the task to a queue` because it can only be solved with pills, and then I check the next task. If `worker >= task[i], the worker is assigned to solve this task`, and we move to the next worker&task. Next, we would finish assigning workers or push all tasks to the queue, which means that even the current strongest worker cannot solve the easiest task. In the end, I check if the rest workers can solve tasks with pills.
   - I get `37 / 49 testcases passed`. I find that it is because I tried to assign stronger worker to a easier task in the loop that I check `worker >= task[i]`, but actually the worker may solve a harder task with pills.
 - **Community** [Solution](https://leetcode.com/problems/maximum-number-of-tasks-you-can-assign/solutions/6703695/binary-search-greedy-with-images-example-walkthrough-c-python-java)
-  - **Idea:** Binary search k, and check if k is **posible**
+  - **Idea:** Binary search k, and check if k is **possible**
   - **Correctness:** doing...
 
 
