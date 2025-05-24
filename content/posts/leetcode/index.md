@@ -8,6 +8,61 @@ tags = ["leetcode"]
 > 先把所有筆記都寫一起等哪天塞不下了再分開，練習用英文寫
 ## <span class="tag easy">Easy</span>
 
+### find-words-containing-character
+- [Link](https://leetcode.com/problems/find-words-containing-character/)
+<details>
+<summary>My First Submission</summary>
+
+  ```cpp
+  class Solution {
+public:
+    vector<int> findWordsContaining(vector<string>& words, char x) {
+        int len=words.size();
+        vector<int>ans;
+        for(int i=0;i<len;i++){
+            int idx=0;
+            while(words[i][idx]!='\0'){
+                if(words[i][idx]==x){
+                    ans.push_back(i);
+                    break;
+                } 
+                idx++;
+            }
+        }
+        return ans;
+    }
+};  
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** I can use ` if (words[i].contains(x)) ans.push_back(i);`
+
+---
+
+### type-of-triangle
+- [Link](https://leetcode.com/problems/type-of-triangle/)
+<details>
+<summary>My First Submission</summary>
+
+```cpp
+class Solution {
+public:
+    string triangleType(vector<int>& nums) {
+        if(nums[0]+nums[1]<=nums[2]||nums[1]+nums[2]<=nums[0]||nums[0]+nums[2]<=nums[1]) return "none";
+        if(nums[0]==nums[1] && nums[0]==nums[2]) return "equilateral";
+        else if(nums[0]==nums[1] || nums[0]==nums[2] || nums[2]==nums[1]) return "isosceles";
+        else return "scalene";
+        }
+};
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** It can be prettier if I use `nth_element(nums.begin(), nums.begin()+1, nums.end());` to sort the three elements.
+
 ### longest-unequal-adjacent-groups-subsequence-i
 - [Link](https://leetcode.com/problems/longest-unequal-adjacent-groups-subsequence-i/)
 <details>
@@ -147,6 +202,78 @@ public:
 ---
 
 ## <span class="tag medium">Medium</span>
+
+### zero-array-transformation-iii
+- [Link](https://leetcode.com/problems/zero-array-transformation-iii/)
+- **No Submission**
+- **Community** [Solution](https://leetcode.com/problems/zero-array-transformation-iii/solutions/6768535/priority-queues-in-depth-with-images-idea-behind-solution-c-python-java)
+
+---
+
+### set-matrix-zeroes
+- [Link](https://leetcode.com/problems/set-matrix-zeroes/)
+<details>
+<summary>My First Submission</summary>
+
+```cpp
+  class Solution {
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+        int z[2][200]={0};
+        int m=matrix.size();
+        int n=matrix[0].size();
+        for(int i=0;i<m;i++)
+            for(int j=0;j<n;j++)
+                if(matrix[i][j]==0){
+                    z[0][i]=1;
+                    z[1][j]=1;
+                }
+        for(int i=0;i<m;i++)
+            for(int j=0;j<n;j++)
+                if(z[0][i] || z[1][j]) matrix[i][j]=0;
+    }
+};
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** Keep the position of 0s on the matrix, and traverse it again for setting 1s to 0s.
+
+---
+
+### zero-array-transformation-i
+- [Link](https://leetcode.com/problems/zero-array-transformation-i/)
+<details>
+<summary>My First Submission</summary>
+
+  ```cpp
+  class Solution {
+public:
+    bool isZeroArray(vector<int>& nums, vector<vector<int>>& queries) {
+        int q_len=queries.size();
+        int n_len=nums.size();
+        int count[100000]={0};
+        for(int i=0; i<q_len; i++){
+            count[queries[i][0]]++;
+            if(queries[i][1]+1<q_len)
+                count[queries[i][1]+1]--;
+        }
+        for(int i=1; i<n_len; i++) count[i]+=count[i-1];
+        for(int i=0; i<n_len; i++) if(nums[i]>count[i]) return false;
+        return true;
+    }
+};
+// need a method that l,r solved efficiently
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** We get TLE if we simply traverse the interval. For each interval `li`,`ri`, we use an array to count the effect of the interval by `a[li]++` and `a[ri+1]--`. This way we only need to use O(n) to do the prefix sum in the end instead of O(n^2) for treating the interval separately. 
+
+---
+
 ### longest-unequal-adjacent-groups-subsequence-ii
 - [Link](https://leetcode.com/problems/longest-unequal-adjacent-groups-subsequence-ii/)
 - **No Submission:** I gave up understanding the problem...
@@ -564,6 +691,52 @@ public:
 ---
 
 ## <span class="tag hard">Hard</span>
+
+### painting-a-grid-with-three-different-colors
+- [Link](https://leetcode.com/problems/painting-a-grid-with-three-different-colors/)
+<details>
+<summary>My First Submission</summary>
+
+```cpp
+  class Solution {
+public:
+    int colorTheGrid(int m, int n) {
+        int up,left;
+        long long dp[m][n][3];
+        int mod=1e9+7;
+        for(int i=0;i<m;i++)
+            for(int j=0;j<n;j++)
+                for(int k=0;k<3;k++)
+                    dp[i][j][k]=0;
+        dp[0][0][0]=1, dp[0][0][1]=1, dp[0][0][2]=1;
+        for(int i=0;i<m;i++)
+            for(int j=0;j<n;j++)
+                for(int k=0;k<3;k++){
+                    int c1=(k+1)%3;
+                    int c2=(k+2)%3;
+                    if(i>0){
+                        dp[i][j][k]=(dp[i][j][k]+dp[i-1][j][c1])%mod;
+                        dp[i][j][k]=(dp[i][j][k]+dp[i-1][j][c2])%mod;
+                    } 
+                    if(j>0){
+                        dp[i][j][k]=(dp[i][j][k]+dp[i][j-1][c1])%mod;
+                       dp[i][j][k]=(dp[i][j][k]+dp[i][j-1][c2])%mod;
+                    }
+                    if(i>0&&j>0) dp[i][j][k]=(dp[i][j][k]+dp[i-1][j-1][k])%mod;
+                }
+        int ans=0;
+        for(int k=0;k<3;k++)
+            ans=(ans+dp[m-1][n-1][k])%mod;
+        return ans;
+    }
+};
+  ```
+</details>
+
+- **Original Idea:** 2D dp, each grid depends on top&left. I started with 2*2 grid and think that for a fix color at `[1][1]`, I can consider `[0][0]` and fix the color of top&left thus there are four situation that I can add up with `[0][0]`. But I found that this method fail because top&left grids may contain more than one possible combination for a fixed color.
+  - **Bitmask:** I see the hint says that bitmask-dp may help but I dont know this technic before, thus I studied this [reference](https://hackmd.io/@LeeShoWhaodian/By4Yq-9xxl?print-pdf#/)
+
+---
 
 ### total-characters-in-string-after-transformations-ii
 - [Link](https://leetcode.com/problems/total-characters-in-string-after-transformations-ii/)
