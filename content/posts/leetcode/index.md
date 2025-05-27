@@ -8,6 +8,32 @@ tags = ["leetcode"]
 > 先把所有筆記都寫一起等哪天塞不下了再分開，練習用英文寫
 ## <span class="tag easy">Easy</span>
 
+### divisible-and-non-divisible-sums-difference
+- [Link](https://leetcode.com/problems/divisible-and-non-divisible-sums-difference/)
+<details>
+<summary>My First Submission</summary>
+
+  ```cpp
+  class Solution {
+public:
+    int differenceOfSums(int n, int m) {
+        int num[2]={0};
+        for(int i=1;i<=n;i++)
+            if(i%m!=0) num[0]+=i;
+            else num[1]+=i;
+        return num[0]-num[1];
+    }
+};
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** Trivial if using for loop, which is acceptable since n<=1000.
+- **Improving:** This can be solved using math:`return n * (n + 1) / 2 - m * (n / m) * (n / m + 1);`
+
+---
+
 ### find-words-containing-character
 - [Link](https://leetcode.com/problems/find-words-containing-character/)
 <details>
@@ -62,6 +88,8 @@ public:
 
 - **My result:** <span class="result ac">AC</span>  
 - **Original Idea & Result Analyzing:** It can be prettier if I use `nth_element(nums.begin(), nums.begin()+1, nums.end());` to sort the three elements.
+
+---
 
 ### longest-unequal-adjacent-groups-subsequence-i
 - [Link](https://leetcode.com/problems/longest-unequal-adjacent-groups-subsequence-i/)
@@ -202,6 +230,48 @@ public:
 ---
 
 ## <span class="tag medium">Medium</span>
+
+### longest-palindrome-by-concatenating-two-letter-words
+- [Link](https://leetcode.com/problems/longest-palindrome-by-concatenating-two-letter-words/)
+<details>
+<summary>My First Submission</summary>
+
+  ```cpp
+  class Solution {
+public:
+    int longestPalindrome(vector<string>& words) {
+        int hash[1000]={0};
+        int len=words.size();
+        int ans=0;
+        int con=26;
+        for(int i=0;i<len;i++){
+            if(hash[(words[i][0]-'a')*con+words[i][1]-'a']){
+                ans+=4;
+                hash[(words[i][0]-'a')*con+words[i][1]-'a']--;
+            }
+            else {
+                hash[(words[i][1]-'a')*con+words[i][0]-'a']++;
+            }
+        }
+        for(int i=0;i<len;i++){
+            if(words[i][0]==words[i][1]
+            && hash[(words[i][0]-'a')*con+words[i][1]-'a']){
+                ans+=2;
+                break;
+            }
+        }
+        return ans;
+    }
+};
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** Use a hash table to keep the words, and see if there is a word that can put on mid in the end.
+- **Improving:** Just use a 26*26 matrix to track the words (why I did not come up with this?). Also, use `for (auto &s : words)`
+
+---
 
 ### zero-array-transformation-iii
 - [Link](https://leetcode.com/problems/zero-array-transformation-iii/)
@@ -691,6 +761,76 @@ public:
 ---
 
 ## <span class="tag hard">Hard</span>
+
+### largest-color-value-in-a-directed-graph
+- [Link](https://leetcode.com/problems/largest-color-value-in-a-directed-graph/)
+<details>
+<summary>My First Submission</summary>
+
+```cpp
+  class Solution {
+public:
+    int largestPathValue(string colors, vector<vector<int>>& edges) {
+        int num_nodes=colors.size();
+        vector<vector<int>> dp(num_nodes, vector<int>(26));
+        vector<vector<int>> adj(num_nodes);
+        vector<int> inDegree(num_nodes, 0);
+        int ans=-1;
+        //count indegree & neighbors
+        for (auto& edge : edges) {
+            int u = edge[0], v = edge[1];
+            adj[u].push_back(v);
+            inDegree[v]++;
+        }
+
+        queue<int> q;
+        vector<int> topo; 
+
+        //we get topo_order after the sort(no used in the end)
+
+        // Push all nodes with in-degree 0
+        for (int i = 0; i < num_nodes; i++) {
+            if (inDegree[i] == 0)
+                q.push(i);
+        }
+        //now check nodes with topo_order
+        while (!q.empty()) {
+            int u = q.front();q.pop();
+            int c=colors[u]-'a';
+    
+            topo.push_back(u); //no used
+
+            dp[u][c]++; //the count for the cur_node
+            
+            ans=max(dp[u][c],ans);
+            //check cur node's neighbors
+            for (int nei : adj[u]) {
+                inDegree[nei]--;
+                if (inDegree[nei] == 0)
+                    q.push(nei);
+                //passthough current color_count to the neighbor
+                for(int i = 0; i < 26; ++i)
+                    dp[nei][i] = max(dp[nei][i], dp[u][i]);
+                // !!!!!! must trace all color
+                // because the cur_color may not be same as neibor
+                // thus we may miss passing the count of color to the nei
+            }
+        }
+        if (topo.size() < num_nodes)
+            return -1;  // return empty vector to indicate cycle
+        return ans;
+
+
+    }
+};
+  ```
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** I actually solved this problem by copying the topological sort, and combine with dp process. The general idea I learned is that
+since we need direct path maximum color, the topological sort is needed so we can know that which node comes first. This way, we can count the length of color during the sorting process.
+
+---
 
 ### painting-a-grid-with-three-different-colors
 - [Link](https://leetcode.com/problems/painting-a-grid-with-three-different-colors/)
