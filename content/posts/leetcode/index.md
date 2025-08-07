@@ -8,6 +8,40 @@ tags = ["leetcode"]
 > 先把所有筆記都寫一起等哪天塞不下了再分開，練習用英文寫
 ## <span class="tag easy">Easy</span>
 
+### maximum-difference-by-remapping-a-digit
+- [Link](https://leetcode.com/problems/maximum-difference-by-remapping-a-digit/)
+<details>
+<summary>My First Submission</summary>
+
+```cpp
+  class Solution {
+public:
+    int minMaxDifference(int num) {
+        string num_str=to_string(num);
+        int len_str=num_str.size();
+        int d1=0, d2=0;
+        char sub;
+        for(int i=0; i < len_str; ++i)
+            if(num_str[i]!='9'){
+                sub=num_str[i];
+                break;
+            }
+        for(int i=0; i < len_str; ++i){
+            if(num_str[i]==num_str[0])
+                d2=d2*10;
+            else d2=d2*10+(num_str[i]-'0');
+            if(num_str[i]==sub)
+                d1=d1*10+('9'-'0');
+            else d1=d1*10+(num_str[i]-'0');
+        }
+        return d1-d2;
+    }
+};
+  ```
+
+</details>
+
+
 ### divisible-and-non-divisible-sums-difference
 - [Link](https://leetcode.com/problems/divisible-and-non-divisible-sums-difference/)
 <details>
@@ -230,6 +264,315 @@ public:
 ---
 
 ## <span class="tag medium">Medium</span>
+
+### longest-binary-subsequence-less-than-or-equal-to-k
+- [Link](https://leetcode.com/problems/longest-binary-subsequence-less-than-or-equal-to-k/)
+<details>
+<summary>My First Submission</summary>
+
+  ```cpp
+  class Solution {
+public:
+    int longestSubsequence(string s, int k) {
+        int max_len=0;
+        int s_len=s.size();
+        for(int i=0; i<s_len; i++) if(s[i]=='0') max_len++;
+        long long value=0;
+        long long mul=1;
+        for(int i=0; i<s_len; i++){
+            if(s[s_len-1-i]=='1'){
+                value+=mul;
+                if(value<=k) max_len++;
+                else break;
+            }
+            mul*=2;
+            if(mul > k) break;
+        }
+        return max_len;
+
+    }
+}
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** Notice that it's sub sequence not sub array. Count zero first and greedy add ones.
+
+---
+
+### distribute-candies-among-children-ii
+- [Link](https://leetcode.com/problems/distribute-candies-among-children-ii/)
+<details>
+<summary>My First Submission</summary>
+
+```cpp
+class Solution {
+public:
+    long long h(int n, int m){
+        if(m==0) return 1;
+        int a=n+m-1;
+        int b=n-1;
+        long long ans=1;
+        for(int i=0;i<b;++i)
+            ans*=(a-i);
+        for(int i=0;i<b;++i)
+            ans/=(b-i);
+        return ans;
+    }
+    long long distributeCandies(int n, int limit) {
+        long long ans=h(3,n);
+        long long one_vio=0;
+        for(int i=limit+1;i<=n; ++i)
+            one_vio+=h(2,n-i);
+        one_vio*=3;
+        long long two_vio=0;
+        for(int i=(limit+1)*2;i<=n;++i)
+            two_vio+=h(2, i-(limit+1)*2);
+        two_vio*=3;
+        return (limit*3<n)? 0:(ans-one_vio+two_vio);
+    }
+};
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** Using combination, count the number without limitation and then deduct violations.
+
+---
+
+### snakes-and-ladders
+- [Link](https://leetcode.com/problems/snakes-and-ladders/)
+<details>
+<summary>My First Submission</summary>
+
+  ```cpp
+  class Solution {
+public:
+    pair<int, int> id_to_pos(int id, int n){
+        int r=n-1-(id-1)/n;
+        int c=(n-1-r)%2==0? (id-1)%n:n-1-(id-1)%n;
+        return {r,c};
+    }
+    int snakesAndLadders(vector<vector<int>>& board) {
+        int n=board.size();
+        int max_ID=n*n;
+        vector<vector<int>> dp(n, vector<int>(n,INT_MAX-1));
+        dp[n-1][0]=0;
+
+        for(int i=1; i<=max_ID;++i){
+            pair<int, int> pos = id_to_pos(i, n);
+            int count=dp[pos.first][pos.second];
+            for(int j=1; j<=6; ++j){
+                if(i+j <= max_ID){
+                    pair<int, int> pos = id_to_pos(i+j, n);
+                    int r=pos.first;
+                    int c=pos.second;
+                    if(board[r][c]!=-1){
+                        pair<int, int> pos = id_to_pos(board[r][c], n);
+                        r=pos.first;
+                        c=pos.second;
+                        dp[r][c]=min(count+1, dp[r][c]);
+                    }
+                    else {dp[r][c]=min(count+1, dp[r][c]);}
+                }
+                else break;
+            }   
+        }
+        int ans=n%2==0? dp[0][0]:dp[0][n-1];
+        return ans==INT_MAX-1? -1:ans;
+    }
+};
+
+  ```
+
+</details>
+
+- **My result:** <span class="result wa">WA</span>  
+- **Original Idea & Result Analyzing:** Because of the ladder and snake, the optimal path may not go from small index to bigger index, thus the dp would not lead to the answer.  
+Instead, I should use `BFS`, which gets the answer once we reach the n*n_th grid.
+
+<details> 
+<summary>Code</summary>
+
+  ```cpp
+  class Solution {
+public:
+    pair<int, int> id_to_pos(int id, int n){
+        int r = n - 1 - (id - 1) / n;
+        int c = (n - 1 - r) % 2 == 0 ? (id - 1) % n : n - 1 - (id - 1) % n;
+        return {r, c};
+    }
+
+    int snakesAndLadders(vector<vector<int>>& board) {
+        int n = board.size();
+        vector<bool> visited(n * n + 1, false);
+        queue<pair<int, int>> q; // {cell ID, steps}
+        q.push({1, 0});
+        visited[1] = true;
+
+        while (!q.empty()) {
+            auto [cur, steps] = q.front();
+            q.pop();
+
+            for (int move = 1; move <= 6; ++move) {
+                int next = cur + move;
+                if (next > n * n) break;
+
+                auto [r, c] = id_to_pos(next, n);
+                if (board[r][c] != -1) next = board[r][c];
+
+                if (!visited[next]) {
+                    if (next == n * n) return steps + 1;
+                    visited[next] = true;
+                    q.push({next, steps + 1});
+                }
+            }
+        }
+        return -1;
+    }
+};
+
+  ```
+
+</details>
+
+---
+ 
+### find-closest-node-to-given-two-nodes
+- [Link](https://leetcode.com/problems/find-closest-node-to-given-two-nodes/)
+<details>
+<summary>My First Submission</summary>
+
+```cpp
+  class Solution {
+public:
+    int closestMeetingNode(vector<int>& edges, int node1, int node2) {
+        int n=edges.size();
+        int next_node=edges[node1];
+        vector<int> path1(n,-1);
+        vector<int> path2(n,-1);
+        int count=0;
+        path1[node1]=0;
+        while(next_node!=-1 && path1[next_node]==-1){
+            path1[next_node]=++count;
+            next_node=edges[next_node];
+        }
+        int ans, min_len, cur_len;
+        if(path1[node2] < 0){
+            ans=-1;
+            min_len=n;
+            cur_len=n;
+        }
+        else{
+            ans=node2;
+            min_len=path1[node2];
+            cur_len=path1[node2];
+        }
+        next_node=edges[node2];
+        path2[node2]=0;
+        count=1;
+        while(next_node!=-1 && path2[next_node]==-1){
+            cur_len=path1[next_node]<0? n:max(count,path1[next_node]);
+            path2[next_node]=count;
+            if(cur_len < min_len || (cur_len==min_len && next_node < ans)){
+                ans=next_node;
+                min_len=cur_len;
+            }
+            next_node=edges[next_node];
+            count++;
+        }
+        return ans;
+    }
+};
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** Run two DFS and check the path.
+
+---
+
+
+### maximize-the-number-of-target-nodes-after-connecting-trees-i
+- [Link](https://leetcode.com/problems/maximize-the-number-of-target-nodes-after-connecting-trees-i/)
+<details>
+<summary>My First Submission</summary>
+
+```cpp
+ class Solution {
+public:
+    vector<vector<int>> build_adj(int n, vector<vector<int>>& edges) {
+        vector<vector<int>> adj(n);
+        for (auto& e : edges) {
+            adj[e[0]].push_back(e[1]);
+            adj[e[1]].push_back(e[0]); // undirected
+        }
+        return adj;
+    }
+    int bfs_count_within_k(int src, vector<vector<int>>& adj, int limit) {
+        int n = adj.size();
+        vector<int> dist(n, -1);
+        queue<int> q;
+        q.push(src);
+        dist[src] = 0;
+
+        int count = 0;
+        while (!q.empty()) {
+            int u = q.front(); q.pop();
+            if (dist[u] > limit) continue;
+            count++;
+
+            for (int v : adj[u]) {
+                if (dist[v] == -1) {
+                    dist[v] = dist[u] + 1;
+                    q.push(v);
+                }
+            }
+        }
+        return count;
+    }
+
+    vector<int> maxTargetNodes(vector<vector<int>>& edges1, vector<vector<int>>& edges2, int k) {
+        int len_adj1=edges1.size();
+        int len_adj2=edges2.size();
+        int len_tree[2]={0};
+        for(int i=0;i<len_adj1;i++)
+            len_tree[0]=max(len_tree[0],max(edges1[i][0],edges1[i][1]));
+        for(int i=0;i<len_adj2;i++)
+            len_tree[1]=max(len_tree[1],max(edges2[i][0],edges2[i][1]));
+        len_tree[0]++; len_tree[1]++;
+        vector<vector<int>> allDistances1(len_tree[0]);
+        vector<vector<int>> allDistances2(len_tree[1]);
+        vector<vector<int>> adj1 = build_adj(len_tree[0], edges1);
+        vector<vector<int>> adj2 = build_adj(len_tree[1], edges2);
+        vector<int> ans(len_tree[0],0);
+        vector<int> table1(len_tree[0],0);
+        vector<int> table2(len_tree[1],0);
+        for (int i = 0; i < len_tree[0]; ++i)
+            table1[i] = bfs_count_within_k(i, adj1, k);
+ 
+        for (int i = 0; i < len_tree[1]; ++i)
+            table2[i] = bfs_count_within_k(i, adj2, k - 1);
+        
+        int max2=0;
+        for(int j=0; j < len_tree[1]; ++j)
+            max2=max(max2,table2[j]);
+        for(int i=0;i<len_tree[0];++i)
+            ans[i]=table1[i]+max2;
+        return ans;
+    }
+};
+  ```
+
+</details>
+
+- **My result:** <span class="result ac">AC</span>  
+- **Original Idea & Result Analyzing:** Run BFS to find the length of path. Note that we should convert edges to adj_list or we would get TLE.
+
+---
 
 ### longest-palindrome-by-concatenating-two-letter-words
 - [Link](https://leetcode.com/problems/longest-palindrome-by-concatenating-two-letter-words/)
@@ -761,6 +1104,127 @@ public:
 ---
 
 ## <span class="tag hard">Hard</span>
+
+### maximize-the-number-of-target-nodes-after-connecting-trees-ii
+- [Link](https://leetcode.com/problems/maximize-the-number-of-target-nodes-after-connecting-trees-ii/)
+<details>
+<summary>My First Submission</summary>
+
+  ```cpp
+  class Solution {
+public:
+    vector<vector<int>> build_adj(int n, vector<vector<int>>& edges) {
+        vector<vector<int>> adj(n);
+        for (auto& e : edges) {
+            adj[e[0]].push_back(e[1]);
+            adj[e[1]].push_back(e[0]);
+        }
+        return adj;
+    }
+    int bfs(int src, vector<vector<int>>& adj, int even_odd){
+        int n = adj.size();
+        vector<int> dist(n, -1);
+        queue<int> q;
+        q.push(src);
+        dist[src] = 0;
+        int count = 0;
+        while (!q.empty()) {
+            int u = q.front(); q.pop();
+            if(dist[u]%2==even_odd) count++;
+            for (int v : adj[u]) {
+                if (dist[v] == -1) {
+                    dist[v] = dist[u] + 1;
+                    q.push(v);
+                }
+            }
+        }
+        return count;
+    }
+    vector<int> maxTargetNodes(vector<vector<int>>& edges1, vector<vector<int>>& edges2) {
+        int len_tree[2];
+        len_tree[0]=edges1.size()+1;
+        len_tree[1]=edges2.size()+1;
+        vector<int> even(len_tree[0],0);
+        vector<int> ans(len_tree[0],0);
+        vector<vector<int>> adj1 = build_adj(len_tree[0], edges1);
+        vector<vector<int>> adj2 = build_adj(len_tree[1], edges2);
+        for(int i=0;i<len_tree[0];i++)
+            even[i]=bfs(i,adj1,0);
+        int odd_max=0;
+        for(int i=0;i<len_tree[1];i++)
+            odd_max=max(odd_max,bfs(i,adj2,1));
+        for(int i=0;i<len_tree[0];i++)
+            ans[i]=even[i]+odd_max;
+        return ans;
+    }
+};
+  ```
+
+</details>
+
+- **My result:** <span class="result tle">TLE</span>  
+- **Original Idea & Result Analyzing:** I cannot do bfs on each node which leads to about O(n*n) complexity.
+- **Improving:** After seeing the solutions saying that I can paint the graph with two color, I passed this problem.
+
+<details>
+<summary>Code</summary>
+
+  ```cpp
+  class Solution {
+public:
+    vector<vector<int>> build_adj(int n, vector<vector<int>>& edges) {
+        vector<vector<int>> adj(n);
+        for (auto& e : edges) {
+            adj[e[0]].push_back(e[1]);
+            adj[e[1]].push_back(e[0]);
+        }
+        return adj;
+    }
+    void bfs(int src, vector<vector<int>>& adj, vector<int>&nodes_color){
+        int n = adj.size();
+        queue<int> q;
+        q.push(src);
+        nodes_color[src]=1;
+        while (!q.empty()) {
+            int u = q.front(); q.pop();
+            for (int v : adj[u]) {
+                if (nodes_color[v]==0) {
+                    nodes_color[v]= (nodes_color[u]==1)? 2:1;
+                    q.push(v);
+                }
+            }
+        }
+    }
+    vector<int> maxTargetNodes(vector<vector<int>>& edges1, vector<vector<int>>& edges2) {
+        int len_tree[2];
+        len_tree[0]=edges1.size()+1;
+        len_tree[1]=edges2.size()+1;
+        vector<int> ans(len_tree[0],0);
+        vector<vector<int>> adj1 = build_adj(len_tree[0], edges1);
+        vector<vector<int>> adj2 = build_adj(len_tree[1], edges2);
+        vector<int> nodes_color1(len_tree[0],0);
+        vector<int> nodes_color2(len_tree[1],0);
+        bfs(0,adj1,nodes_color1);
+        bfs(0,adj2,nodes_color2);
+        int tree1_count[2]={0}; //only two kinds of result;
+        for(int i=0;i<len_tree[0];++i)
+            if(nodes_color1[i]==1) tree1_count[0]++;
+            else tree1_count[1]++;
+        int tree2_count[2]={0}; //only two kinds of result;
+        for(int i=0;i<len_tree[1];++i)
+            if(nodes_color2[i]==1) tree2_count[0]++;
+            else tree2_count[1]++;
+        int max2=max(tree2_count[0],tree2_count[1]);
+        for(int i=0;i<len_tree[0];++i)
+            ans[i]=(nodes_color1[i]==1)? (tree1_count[0]+max2):(tree1_count[1]+max2);
+        return ans;
+    }
+};
+  ```
+
+</details>
+
+---
 
 ### largest-color-value-in-a-directed-graph
 - [Link](https://leetcode.com/problems/largest-color-value-in-a-directed-graph/)
